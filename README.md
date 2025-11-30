@@ -32,55 +32,6 @@ Design goals:
 
 ---
 
-## Git & repo guidance
-
-Quick starter (first time, from project root):
-
-```bash
-git init
-git add .
-git commit -m "Initial import: OSINT-PRO"
-git branch -M main
-# add remote and push if available:
-# git remote add origin git@github.com:youruser/OSINT-CLI.git
-# git push -u origin main
-```
-
-Recommended .gitignore entries:
-
-```
-# Python
-__pycache__/
-*.pyc
-backend/.venv/
-.env
-
-# Node
-node_modules/
-
-# IDE
-.vscode/
-.idea/
-.DS_Store
-
-# Logs
-*.log
-```
-
-Branching workflow (suggested):
-- main — stable
-- develop — ongoing work
-- feature/<name> — new features
-- Use PRs, small commits, readable messages.
-
-Tagging release example:
-```bash
-git tag -a v0.1.0 -m "Initial working prototype"
-git push origin v0.1.0
-```
-
----
-
 ## Quick setup & tutorial (commands)
 
 Prerequisites:
