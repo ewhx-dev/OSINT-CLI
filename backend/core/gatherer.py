@@ -15,6 +15,7 @@ SOURCE_MODULES = [
     'sources.social_media',
     'sources.vulnerability_db',
     'sources.search_engine',
+    'sources.deep_search',   
 ]
 
 async def _maybe_awaitable(obj):

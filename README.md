@@ -171,6 +171,31 @@ Advanced runs:
 
 ---
 
+## Deep Search (law‑respecting, configurable)
+
+This project includes a Deep Search source that performs broad discovery while respecting laws and provider terms:
+
+- Purpose: gather additional indexed web results, code references and profile hits related to the target by using official APIs and safe heuristics.
+- Providers supported (optional, enable with environment variables):
+  - Bing Web Search API (BING_API_KEY) — broad web discovery (web pages, snippets)
+  - GitHub Search API (GITHUB_TOKEN) — find user profiles and code mentions
+- Fallback: if no API keys are configured, the Deep Search runs a conservative simulated mode that returns clearly labeled simulated results for local testing.
+- Safeguards:
+  - Uses official APIs when available; does not perform unauthorized scraping.
+  - Conservative rate delays and small result limits to avoid abusive traffic.
+  - Deduplicates results and returns standardized Pydantic models (WebSearchHit, SocialMediaHits) for integration with the gatherer.
+- Configuration (examples):
+```bash
+export BING_API_KEY="your_bing_key"
+export BING_ENDPOINT="https://api.bing.microsoft.com/v7.0/search"  # optional
+export GITHUB_TOKEN="your_github_token"
+export MAX_BING_RESULTS=6
+export MAX_GITHUB_USERS=5
+```
+- Note: Always respect API usage policies; use scoped tokens and monitor quotas.
+
+---
+
 ## Security & ethics
 
 This tool is for lawful and ethical OSINT research only. Be mindful of:
@@ -188,7 +213,6 @@ This tool is for lawful and ethical OSINT research only. Be mindful of:
 
 ---
 
-If you want, I can:
-- generate a Docker Compose file for Python + Go + Redis,
-- add a .github/workflows CI step to run linters and unit tests,
-- scaffold a basic integration test for the gatherer.
+## Future updates
+
+This project will be actively updated with new data sources, improved normalization, more integrations (secure API connectors), and usability improvements. Check the repository for future commits and releases.
