@@ -205,11 +205,61 @@ This tool is for lawful and ethical OSINT research only. Be mindful of:
 
 ---
 
-## Next recommended steps
+## What the Dockerfiles do
 
-- Add Docker Compose to orchestrate Redis, Python and gateway for reproducible local environments.
-- Add unit tests for `backend/core/gatherer.py` normalization and caching.
-- Add integration connectors for real OSINT APIs (with secure storage for keys).
+Two Dockerfiles are provided to build container images for local development and reproducible environments:
+
+- backend/Dockerfile
+  - Base: python:3.11-slim.
+  - Installs minimal build tools required by some Python packages.
+  - Installs Python dependencies from backend/requirements.txt with pip.
+  - Copies the repository into the image and sets PYTHONPATH to /app so local packages (backend, sources) resolve.
+  - Exposes port 8001 and runs the FastAPI app with uvicorn: uvicorn backend.api:app --host 0.0.0.0 --port 8001.
+  - Intended for development: the docker-compose mounts the repo so you can iterate on code without rebuilding every change.
+
+- services/gateway/Dockerfile
+  - Base: golang:1.20-bullseye.
+  - Copies the gateway source (services/gateway) and builds a static gateway binary via go build.
+  - Exposes port 8080 and runs the compiled gateway binary.
+  - Keeps the gateway lightweight and reproducible inside a container.
+
+- docker-compose.yml
+  - Orchestrates three services: redis, backend (Python FastAPI), and gateway (Go).
+  - Mounts the repo into containers for development convenience and wires Redis to the Python service for caching.
+  - Environment variables (BING_API_KEY, GITHUB_TOKEN, REDIS_URL, etc.) can be injected at runtime or via an env file.
+
+Use docker compose up --build from project root to start all services (Redis :6379, Python :8001, Gateway :8080).
+
+---
+
+## OSINT-CLI (CLI) file — purpose and functionality
+
+The command-line interface is implemented in Node.js at cmd/analyze_cli.js (referred to as "osint-cli") and provides a user-friendly way to run analyses:
+
+- Purpose:
+  - Send an analysis request for a domain or username to the Go Gateway endpoint: http://localhost:8080/analyze?target=<target>.
+  - Receive the normalized JSON report produced by the Python core and format it into a readable terminal report.
+
+- Key behaviors:
+  - Accepts a single positional argument: the target (domain or username).
+  - Calls the Gateway and handles HTTP statuses:
+    - Formats and prints a human-friendly report when response is OK.
+    - Detects and reports rate limit responses (429) and other HTTP errors.
+    - Attempts to parse JSON, and prints response body when parsing fails for debugging.
+  - Adds timing information to show total analysis duration.
+  - Uses colorized terminal output and icons to highlight findings (profiles, vulnerabilities, dorks).
+  - Minimal dependencies: Node fetch (native in modern Node) and no heavy UI libraries.
+
+- How to run:
+  - Ensure Gateway and Python services are running.
+  - From repo root: node cmd/analyze_cli.js <target>
+  - Examples:
+    - node cmd/analyze_cli.js example.com
+    - node cmd/analyze_cli.js johndoe
+
+- Integration:
+  - CLI expects the Gateway at :8080 which enforces per-IP rate limiting and proxies to the Python API.
+  - The CLI does not perform collection itself — it delegates to the API stack and focuses on presentation and UX.
 
 ---
 
