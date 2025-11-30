@@ -35,7 +35,7 @@ Design goals:
 ## Quick setup & tutorial (commands)
 
 Prerequisites:
-- Linux (tested), Go 1.20+, Python 3.10+, Node.js 18+, Redis (optional but recommended)
+- Windows or Linux (tested), Go 1.20+, Python 3.10+, Node.js 18+, Redis (optional but recommended)
 
 Install Python deps:
 ```bash
